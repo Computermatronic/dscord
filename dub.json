@@ -1,42 +1,25 @@
 {
-  "name": "dscord",
-  "description": "discord client library",
-  "authors": ["Andrei Zbikowski"],
-  "homepage": "http://github.com/b1naryth1ef/dscord",
-  "license": "zlib",
-  "targetType": "library",
-  "dependencies": {
-    "shaker": "~>0.0.8",
-    "vibe-d:core": "~>0.8.0-beta.3",
-    "vibe-d:http": "~>0.8.0-beta.3",
-    "dcad": "~>0.0.9"
-  },
-  "configurations": [
-    {
-      "name": "dscord-linux-static-x64",
-      "platforms": ["linux", "x86_64"],
-      "subConfigurations": {
-        "shaker": "shaker-static-x64",
-        "opus": "opus-static-x64"
-      }
-    },
-    {
-      "name": "dscord-linux-dynamic",
-      "platforms": ["linux"],
-      "subConfigurations": {
-        "shaker": "shaker-dynamic",
-        "opus": "opus-dynamic"
-      }
-    },
-    {
-      "name": "dscord-osx",
-      "lflags": ["-L/usr/local/opt/openssl/lib"],
-      "platforms": ["OSX"]
-    },
-    {
-      "name": "dscord-windows",
-      "platforms": ["Windows"]
-    }
-  ],
-  "-ddoxFilterArgs": ["--no-unittest-examples"]
+	"authors": [
+		"Andrei Zbikowski"
+	],
+	"-ddoxFilterArgs": [
+		"--no-unittest-examples"
+	],
+	"description": "discord client library",
+	"importPaths": [
+		"src/"
+	],
+	"name": "lib-dscord",
+	"version": "0.0.11",
+	"dependencies": {
+		"vibe-d:core": "==0.8.2",
+		"dcad": "~>0.0.9",
+		"vibe-d:http": "==0.8.2"
+	},
+	"license": "zlib",
+	"sourcePaths": [
+		"src/"
+	],
+	"homepage": "http://github.com/b1naryth1ef/dscord",
+	"targetType": "library"
 }

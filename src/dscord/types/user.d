@@ -11,6 +11,8 @@ alias UserMap = ModelMap!(Snowflake, User);
 enum GameType : ushort {
   DEFAULT = 0,
   STREAMING = 1,
+  LISTENING = 2,
+  WATCHING = 3
 }
 
 enum UserStatus : string {

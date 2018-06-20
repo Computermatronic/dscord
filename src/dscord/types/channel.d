@@ -54,7 +54,6 @@ class Channel : IModel, IPermissible {
   short        position;
   uint         bitrate;
   ChannelType  type;
-  Snowflake    parentID;
 
   @JSONListToMap("id")
   UserMap         recipients;
@@ -81,22 +80,21 @@ class Channel : IModel, IPermissible {
     return format("<Channel %s (%s)>", this.name, this.id);
   }
 
+  Message getMessage(Snowflake id) {
+    import dscord.api;
+    return this.client.api.channelsMessagesList(this.id, 1, MessageFilter.AROUND, id)[0];
+  }
+
   Message sendMessage(inout(string) content, string nonce=null, bool tts=false) {
-    return this.client.api.channelsMessagesCreate(this.id, content, nonce, tts, null);
+    return this.client.api.channelsMessagesCreate(this.id, content, nonce, tts);
   }
 
   Message sendMessagef(T...)(inout(string) content, T args) {
-    return this.client.api.channelsMessagesCreate(this.id, format(content, args), null, false, null);
+    return this.client.api.channelsMessagesCreate(this.id, format(content, args), null, false);
   }
 
   Message sendMessage(Sendable obj) {
-    return this.client.api.channelsMessagesCreate(
-      this.id,
-      obj.getContents(),
-      obj.getNonce(),
-      obj.getTTS(),
-      obj.getEmbed(),
-    );
+    return this.sendMessage(obj.toSendableString());
   }
 
   /// Whether this is a direct message

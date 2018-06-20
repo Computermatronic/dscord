@@ -39,18 +39,18 @@ class AsyncChainer(T) {
   private {
     T obj;
     AsyncChainer!T parent;
-    ManualEvent resolveEvent;
+    LocalManualEvent resolveEvent;
     bool ignoreFailure;
   }
 
   /**
-    The base constructor which handles the optional creation of ManualEvent used
+    The base constructor which handles the optional creation of LocalManualEvent used
     in the case where this member of the AsyncChain has a delay (or depends on
     something with a delay).
 
     Params:
       obj = the object to wrap for chaining
-      hasResolver = if true, create a ManualEvent used for resolving
+      hasResolver = if true, create a LocalManualEvent used for resolving
   */
   this(T obj, bool hasResolver = false) {
     this.obj = obj;

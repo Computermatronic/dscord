@@ -17,7 +17,7 @@ import std.format,
   Utility class for constructing messages that can be sent over discord, allowing
   for inteligent limiting of size and stripping of formatting characters.
 */
-class MessageBuffer : BaseSendable {
+class MessageBuffer : Sendable {
   private {
     bool codeBlock;
     bool filter;
@@ -37,7 +37,7 @@ class MessageBuffer : BaseSendable {
     this._maxLength = maxLength;
   }
 
-  override immutable(string) getContents() {
+  immutable(string) toSendableString() {
     return this.contents;
   }
 
@@ -125,7 +125,7 @@ class MessageBuffer : BaseSendable {
 /**
   Utility class for constructing tabulated messages.
 */
-class MessageTable : BaseSendable {
+class MessageTable : Sendable {
   private {
     string[] header;
     string[][] entries;
@@ -150,10 +150,10 @@ class MessageTable : BaseSendable {
     this.buffer = buffer;
   }
 
-  override immutable(string) getContents() {
+  immutable(string) toSendableString() {
     if (!this.buffer) this.buffer = new MessageBuffer;
     if (!this.buffer.length) this.appendToBuffer(this.buffer);
-    return buffer.getContents();
+    return buffer.toSendableString();
   }
 
   /**

@@ -84,7 +84,7 @@ enum Routes : Route {
   GUILDS_CHANNELS_LIST = Route(HTTPMethod.GET, "/guilds/$GUILD/channels"),
   GUILDS_CHANNELS_CREATE = Route(HTTPMethod.POST, "/guilds/$GUILD/channels"),
   GUILDS_CHANNELS_MODIFY = Route(HTTPMethod.PATCH, "/guilds/$GUILD/channels"),
-  GUILDS_MEMBERS_LIST = Route(HTTPMethod.GET, "/guilds/$GUILD/members"),
+  GUILDS_MEMBERS_LIST = Route(HTTPMethod.GET, "/guilds/$GUILD/members?limit=%s"),
   GUILDS_MEMBERS_GET = Route(HTTPMethod.GET, "/guilds/$GUILD/members/%s"),
   GUILDS_MEMBERS_MODIFY = Route(HTTPMethod.PATCH, "/guilds/$GUILD/members/%s"),
   GUILDS_MEMBERS_KICK = Route(HTTPMethod.DELETE, "/guilds/$GUILD/members/%s"),

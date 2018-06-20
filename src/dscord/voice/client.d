@@ -15,13 +15,15 @@ import core.time,
        std.algorithm.comparison;
 
 import vibe.core.core,
+       vibe.core.task,
+       vibe.core.sync,
        vibe.core.net,
        vibe.inet.url,
        vibe.http.websockets;
 
 import dcad.types : DCAFile;
 
-import shaker : crypto_secretbox_easy;
+//import shaker : crypto_secretbox_easy;
 
 import dscord.types,
        dscord.voice,
@@ -157,7 +159,7 @@ class VoiceClient {
     Logger  log;
 
     // Event triggered when connection is complete
-    ManualEvent  waitForConnected;
+    LocalManualEvent  waitForConnected;
 
     // Player task
     Task  playerTask;
@@ -185,11 +187,14 @@ class VoiceClient {
     // Track the current speaking state
     bool    speaking = false;
 
+    // Track is paused
+    bool    paused;
+
     // Used to track VoiceServerUpdates
     EventListener  updateListener;
 
     // Used to control pausing state
-    ManualEvent pauseEvent;
+    LocalManualEvent pauseEvent;
   }
 
   this(Channel c, bool mute=false, bool deaf=false) {
@@ -266,19 +271,15 @@ class VoiceClient {
     }
   }
 
-  /// Whether the player is currently paused
-  @property bool paused() {
-    return (this.pauseEvent !is null);
-  }
-
   /// Pause the player
   bool pause(bool wait=false) {
-    if (this.pauseEvent) {
+    if (this.paused) {
       if (!wait) return false;
       this.pauseEvent.wait();
     }
 
     this.pauseEvent = createManualEvent();
+    this.pause = true;
     return true;
   }
 
@@ -290,7 +291,7 @@ class VoiceClient {
 
     // Avoid race conditions by copying
     auto e = this.pauseEvent;
-    this.pauseEvent = null;
+    this.paused = false;
     e.emit();
     return true;
   }
@@ -344,12 +345,12 @@ class VoiceClient {
       ubyte[] payload;
       payload.length = 16 + frame.length;
 
-      assert(crypto_secretbox_easy(
-        payload.ptr,
-        frame.ptr, frame.length,
-        this.nonceRaw,
-        this.secretKey,
-      ) == 0);
+      //assert(crypto_secretbox_easy(
+      //  payload.ptr,
+      //  frame.ptr, frame.length,
+      //  this.nonceRaw,
+      //  this.secretKey,
+      //) == 0);
 
       // And send the header + encrypted payload
       this.udp.conn.send(this.headerRaw ~ payload);
@@ -373,7 +374,7 @@ class VoiceClient {
 
     // If we are currently playing something, kill it
     if (this.playerTask && this.playerTask.running) {
-      this.playerTask.terminate();
+      //this.playerTask.terminate();
     }
 
     this.playable = p;
@@ -502,7 +503,7 @@ class VoiceClient {
     this.state = VoiceStatus.CONNECTED;
 
     // Grab endpoint and create a proper URL out of it
-    this.endpoint = URL("ws", event.endpoint.split(":")[0], 0, Path());
+    this.endpoint = URL("ws", event.endpoint.split(":")[0], 0, NativePath());
     this.sock = connectWebSocket(this.endpoint);
     runTask(&this.run);
 
